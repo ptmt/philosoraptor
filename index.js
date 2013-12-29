@@ -1,7 +1,7 @@
 var util = require('util'),
   twitter = require('twitter'),
   MsTranslator = require('mstranslator');
-//async = require('async');
+
 var TWITTER_USER = 'academ_swag';
 var twit = new twitter({
   consumer_key: 'VE7fixgfdaswpvPBlsKuw',
@@ -31,33 +31,36 @@ function postTweet(statusText, replyToStatusId) {
   );
 }
 
-/*twit.stream('user', {
-  track: 'academ_swag?replies=all'
+twit.stream('user', {
+  track: TWITTER_USER + '?replies=all'
 }, function (stream) {
   stream.on('data', function (data) {
     if (data.user && data.user.screen_name != TWITTER_USER) {
-      //console.log(data);
+
       console.log(data.user.id, data.text);
-      postTweet('@' + data.user.screen_name + ' hi there', data.id);
+      makeSense(data.text, function (finalAnswer) {
+        postTweet('@' + data.user.screen_name + ' ' + finalAnswer, data.id);
+      });
+
     }
   });
-  // Disconnect stream after five seconds
+
   setTimeout(stream.destroy, 25000);
 });
-*/
 
-function makeSense(text) {
+
+function makeSense(text, callback) {
 
   var languages = ["ar", "bg", "ca", "zh-CHS", "zh-CHT", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hi", "hu", "id", "it", "ja", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk", "vi"];
 
-  //console.log(languages[Math.round(Math.random() * languages.length)]);
 
+  text = text.replace('?', '');
   bingClient.initialize_token(function (keys) {
 
     var i = 0;
     var fromLang = 'ru';
     var toLang = 'en';
-    var totalCount = 10;
+    var totalCount = 3;
 
     function translateOnceAgain(err, data) {
       i++;
@@ -70,11 +73,12 @@ function makeSense(text) {
       if (i <= totalCount) {
         fromLang = toLang;
         toLang = i == totalCount - 1 ? 'ru' : languages[Math.round(Math.random() * languages.length)];
-        setTimeout((function () {
-          bingClient.translate(params, translateOnceAgain);
-        }), 2000);
+        // setTimeout((function () {
+        bingClient.translate(params, translateOnceAgain);
+        //}), 2000);
 
-      }
+      } else
+        callback(data);
 
     }
 
@@ -82,5 +86,3 @@ function makeSense(text) {
 
   });
 }
-
-makeSense('Будет ли кот подстрижен этим летом?');
