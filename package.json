@@ -1,0 +1,18 @@
+{
+  "name": "svyatkee",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "user-stream": "0.0.7"
+  },
+  "devDependencies": {
+    "node-twitter": "~0.5.0",
+    "mstranslator": "~0.1.5"
+  }
+}
