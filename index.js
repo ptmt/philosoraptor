@@ -18,9 +18,10 @@ var bingClient = new MsTranslator({
   client_secret: "J8G078YXhuODZ1NSpIy/7h0agazoWleK6vHy7PG7RWQ="
 });
 
-//
 
-makeSense('Привет, как дела', console.log);
+startListenIncomingTweets();
+
+//makeSense('Привет, как дела', console.log);
 
 
 function startListenIncomingTweets() {
