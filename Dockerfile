@@ -10,9 +10,9 @@ RUN apt-get update
 RUN apt-get -y install nodejs
 RUN rm -rf /var/lib/apt/lists/*
 RUN apt-get clean
-RUN npm install forever -g
-RUN npm install bower -g
-RUN npm install grunt-cli -g
+#RUN npm install forever -g
+#RUN npm install bower -g
+#RUN npm install grunt-cli -g
 ADD . /src
 RUN cd /src; npm install
 CMD ["node", "/src/index.js"]
