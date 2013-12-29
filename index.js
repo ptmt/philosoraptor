@@ -148,6 +148,7 @@ function makeSense(text, callback) {
       return item.text;
     }));
 
+    text = text.split(' ').slice(1, text.length).join(' ');
     text = two[0] + ' ' + text + ' ' + two[1];
 
     bingClient.initialize_token(function (keys) {
@@ -155,7 +156,7 @@ function makeSense(text, callback) {
       var i = 0;
       var fromLang = 'ru';
       var toLang = 'en';
-      var totalCount = 3;
+      var totalCount = 10;
 
       function translateOnceAgain(err, data) {
         i++;
