@@ -9,7 +9,9 @@
      #Destination directory 
      gitdest: /home/philosoraptor/src
      #Desired git branch
-     gitbranch: master         
+     gitbranch: master    '
+     #docker image
+     dockerimage: unknownexception/raptor     
      
    tasks:
    - name: Git Checkout current Branch
@@ -17,8 +19,8 @@
           dest={{gitdest}}
           version={{gitbranch}}
  
-   # - name: NPM update via package.json
-   #   npm: path={{appPath}}
+   - name: build docker image
+     docker: image={{dockerimage}}
  
    # - name: Get pid from pid.txt if it exists
    #   command: cat {{pidfile}} removes={{pidfile}}
