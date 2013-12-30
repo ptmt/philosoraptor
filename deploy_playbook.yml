@@ -9,7 +9,7 @@
      #Destination directory 
      gitdest: /home/philosoraptor/src
      #Desired git branch
-     gitbranch: master    '
+     gitbranch: master
      #docker image
      dockerimage: unknownexception/raptor     
      
@@ -19,8 +19,12 @@
           dest={{gitdest}}
           version={{gitbranch}}
  
+   - name: Change directory to source
+     shell: cd {{gitdest}}   
+
    - name: Build docker image
-     shell: start.sh chroot={{gitdest}}
+     script: start.sh
+
  
    # - name: Get pid from pid.txt if it exists
    #   command: cat {{pidfile}} removes={{pidfile}}
