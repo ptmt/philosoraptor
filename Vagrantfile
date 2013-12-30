@@ -37,6 +37,9 @@ usermod -a -G docker "$user"
 
 apt-get -y isntall git
 apt-get -y install libpq-dev build-essential
+add-apt-repository ppa:rquillo/ansible
+apt-get update
+apt-get install ansible
 
 tmp=`mktemp -q` && {
     # Only install the backport kernel, don't bother upgrade if the backport is

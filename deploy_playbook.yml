@@ -19,8 +19,8 @@
           dest={{gitdest}}
           version={{gitbranch}}
  
-   - name: build docker image
-     docker: image={{dockerimage}}
+   - name: Build docker image
+     shell: start.sh chroot={{gitdest}}
  
    # - name: Get pid from pid.txt if it exists
    #   command: cat {{pidfile}} removes={{pidfile}}
