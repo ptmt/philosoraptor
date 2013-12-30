@@ -5,7 +5,7 @@ var util = require('util'),
   _ = require('lodash');
 
 
-var TWITTER_USER = 'academ_swag';
+var TWITTER_USER = 'prophetraptor';
 var twit = new twitter({
   consumer_key: 'VE7fixgfdaswpvPBlsKuw', // you can try
   consumer_secret: 'LPSfhVgSA0lFqVC2tHRxVdagzI4csS1rSbFi0gJbL68',
@@ -150,13 +150,14 @@ function makeSense(text, callback) {
 
     text = text.split(' ').slice(1, text.length).join(' ');
     text = two[0] + ' ' + text + ' ' + two[1];
+    text = text.toLowerCase();
 
     bingClient.initialize_token(function (keys) {
 
       var i = 0;
       var fromLang = 'ru';
       var toLang = 'en';
-      var totalCount = 10;
+      var totalCount = Math.round(Math.random() * 2 * 10) + 4;
 
       function translateOnceAgain(err, data) {
         i++;
@@ -168,7 +169,7 @@ function makeSense(text, callback) {
         console.log(i, fromLang, toLang, err, data);
         if (i <= totalCount) {
           fromLang = toLang;
-          toLang = i == totalCount - 1 ? 'ru' : languages[Math.round(Math.random() * languages.length)];
+          toLang = i == (totalCount - 1) || (toLang != 'ru') ? 'ru' : languages[Math.round(Math.random() * languages.length)];
           // setTimeout((function () {
           bingClient.translate(params, translateOnceAgain);
           //}), 2000);

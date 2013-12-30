@@ -1,0 +1,40 @@
+#local file ~/Ansible_playbooks/app_production_playbook.yml
+---
+ #Hostname of your application server, (or group if you are deploying to multiple)
+ - hosts: webservers   
+   user: root
+   vars:
+     #repo containing your project
+     gitrepo: https://github.com/unknownexception/philosoraptor.git
+     #Destination directory 
+     gitdest: /home/philosoraptor/src
+     #Desired git branch
+     gitbranch: master         
+     
+   tasks:
+   - name: Git Checkout current Branch
+     git: repo={{gitrepo}}
+          dest={{gitdest}}
+          version={{gitbranch}}
+ 
+   # - name: NPM update via package.json
+   #   npm: path={{appPath}}
+ 
+   # - name: Get pid from pid.txt if it exists
+   #   command: cat {{pidfile}} removes={{pidfile}}
+   #   register: pid_contents
+ 
+   # - name: Stop Node Process if running
+   #   command: kill -2 ${pid_contents.stdout} removes={{pidfile}}
+   #   when: pid_contents.stdout > 1
+ 
+   # - name: Change Directories
+   #   command: tmux send-keys -t {{tmuxsession}} "cd {{appPath}}" "ENTER"
+     
+   # - name: Pause to ensure correct state
+   #   pause: seconds=5
+ 
+   # - name: Start Node Process if not running
+   #   command: tmux send-keys -t {{tmuxsession}} "NODE_ENV={{nodeenv}} node {{appPath}}/{{nodeapp}}" "ENTER"
+   #   async: 10
+   #   poll: 0
