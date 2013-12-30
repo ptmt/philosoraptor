@@ -12,5 +12,5 @@ oldid= $(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
 
 docker kill $oldid;
 
-id=$(docker run -p 49160:8080 -d $BUILDIMAGE)
+id=$(docker run -p 8080 -d $BUILDIMAGE)
 echo $id

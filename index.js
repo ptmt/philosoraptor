@@ -39,7 +39,7 @@ function startListenIncomingTweets() {
       }
     });
 
-    setTimeout(stream.destroy, 25000);
+    //setTimeout(stream.destroy, 25000);
   });
 }
 
