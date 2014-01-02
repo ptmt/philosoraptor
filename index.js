@@ -5,7 +5,8 @@ var util = require('util'),
   _ = require('lodash');
 
 
-var TWITTER_USER = 'prophetraptor';
+var TWITTER_USER = 'prophetraptor',
+  debug = process.env['NODE_ENV'] !== 'production';
 var twit = new twitter({
   consumer_key: 'VE7fixgfdaswpvPBlsKuw', // you can try
   consumer_secret: 'LPSfhVgSA0lFqVC2tHRxVdagzI4csS1rSbFi0gJbL68',
@@ -18,11 +19,10 @@ var bingClient = new MsTranslator({
   client_secret: "J8G078YXhuODZ1NSpIy/7h0agazoWleK6vHy7PG7RWQ="
 });
 
-
-startListenIncomingTweets();
-
-//makeSense('Привет, как дела', console.log);
-
+if (debug)
+  makeSense('potomushto', '@a раз два три четыре, пять шесть', console.log);
+else
+  startListenIncomingTweets();
 
 function startListenIncomingTweets() {
   twit.stream('user', {
@@ -32,7 +32,7 @@ function startListenIncomingTweets() {
       if (data.user && data.user.screen_name != TWITTER_USER) {
 
         console.log(data.user.id, data.text);
-        makeSense(data.text, function (finalAnswer) {
+        makeSense(data.user.screen_name, data.text, function (finalAnswer) {
           postTweet('@' + data.user.screen_name + ' ' + finalAnswer, data.id);
         });
 
@@ -44,15 +44,19 @@ function startListenIncomingTweets() {
 }
 
 function getTweetsForUser(screenName, callback) {
-  twit.get('/statuses/user_timeline.json', {
-    screen_name: screenName,
-    include_rts: false,
-    exclude_replies: true,
-    count: 1000
-  }, function (data) {
-    fs.writeFile("mockdata.json", JSON.stringify(data));
-    callback(data);
-  });
+  if (debug)
+    callback(mockDate());
+  else {
+    twit.get('/statuses/user_timeline.json', {
+      screen_name: screenName,
+      include_rts: false,
+      exclude_replies: true,
+      count: 1000
+    }, function (data) {
+      fs.writeFile("mockdata.json", JSON.stringify(data));
+      callback(data);
+    });
+  }
 }
 
 function mockDate() {
@@ -68,7 +72,7 @@ function isAllow(word) {
     return true;
 }
 
-function extractTwoTopWords(tweets) {
+function extractTopTenWords(tweets) {
   var natural = require('natural'),
     NGrams = natural.NGrams,
     tokenizer = new natural.AggressiveTokenizerRu();
@@ -89,13 +93,13 @@ function extractTwoTopWords(tweets) {
       });
   });
 
-  var two = _.first(_.map(_.sortBy(wordsDict, function (item) {
+  var topTen = _.first(_.map(_.sortBy(wordsDict, function (item) {
     return -item.value;
   }), function (tweet) {
-    return tweet.word
-  }), 2);
+    return tweet.word;
+  }), 10);
 
-  return two;
+  return topTen;
 }
 
 /*
@@ -132,55 +136,64 @@ function postTweet(statusText, replyToStatusId) {
       },
 
       function (data) {
-        console.log(util.inspect(data));
+        console.log(util.inspect(data.text));
       }
   );
 }
 
-function makeSense(text, callback) {
+function makeSense(twitterUser, text, callback) {
 
   var languages = ["ar", "bg", "ca", "zh-CHS", "zh-CHT", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hi", "hu", "id", "it", "ja", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk", "vi"];
 
   text = text.replace('?', '');
 
-  getTweetsForUser('potomushto', function (tweets) {
-    var two = extractTwoTopWords(_.map(tweets, function (item) {
+  getTweetsForUser(twitterUser, function (tweets) {
+    var tenWords = extractTopTenWords(_.map(tweets, function (item) {
       return item.text;
     }));
 
-    text = text.split(' ').slice(1, text.length).join(' ');
-    text = two[0] + ' ' + text + ' ' + two[1];
-    text = text.toLowerCase();
+    text = text.split(' ').slice(1, text.length);
+    var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
+    var twitterReplaces = [Math.round(Math.random() * 10), Math.round(Math.random() * 10)];
+    console.log(textReplaces, twitterReplaces, tenWords);
+    text[textReplaces[0]] = tenWords[twitterReplaces[0]];
+    text[textReplaces[1]] = tenWords[twitterReplaces[1]];
+    //text = two[0] + ' ' + text + ' ' + two[1];
+    text = text.join(' ').toLowerCase();
 
-    bingClient.initialize_token(function (keys) {
+    if (debug)
+      callback(text);
+    else {
+      bingClient.initialize_token(function (keys) {
 
-      var i = 0;
-      var fromLang = 'ru';
-      var toLang = 'en';
-      var totalCount = Math.round(Math.random() * 2 * 10) + 4;
+        var i = 0;
+        var fromLang = 'ru';
+        var toLang = 'en';
+        var totalCount = Math.round(Math.random() * 2 * 10) + 4;
 
-      function translateOnceAgain(err, data) {
-        i++;
-        var params = {
-          text: data,
-          from: fromLang,
-          to: toLang
-        };
-        console.log(i, fromLang, toLang, err, data);
-        if (i <= totalCount) {
-          fromLang = toLang;
-          toLang = i == (totalCount - 1) || (toLang != 'ru') ? 'ru' : languages[Math.round(Math.random() * languages.length)];
-          // setTimeout((function () {
-          bingClient.translate(params, translateOnceAgain);
-          //}), 2000);
+        function translateOnceAgain(err, data) {
+          i++;
+          var params = {
+            text: data,
+            from: fromLang,
+            to: toLang
+          };
+          console.log(i, fromLang, toLang, err, data);
+          if (i <= totalCount) {
+            fromLang = toLang;
+            toLang = i == (totalCount - 1) || (toLang != 'ru') ? 'ru' : languages[Math.round(Math.random() * languages.length)];
+            // setTimeout((function () {
+            bingClient.translate(params, translateOnceAgain);
+            //}), 2000);
 
-        } else
-          callback(data);
+          } else
+            callback(data);
 
-      }
+        }
 
-      translateOnceAgain(null, text);
-    });
+        translateOnceAgain(null, text);
+      });
+    }
 
 
 
