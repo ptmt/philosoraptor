@@ -11,8 +11,10 @@ ls
 
 #Stop previously running container
 oldid= $(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
+if [ x"$line" = x ]
+then
+   docker kill $oldid
+fi
 
-docker kill $oldid;
-
-id=$(docker run -e NODE_ENV=PRODUCTION -p 8080 -d $BUILDIMAGE)
-echo $id
+#id=$(docker run -e NODE_ENV=PRODUCTION -p 8080 -d $BUILDIMAGE)
+#echo $id

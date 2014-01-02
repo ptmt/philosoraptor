@@ -8,6 +8,12 @@ start.sh
 ````
 Or run ansible-playbook.
 
+````
+$ sudo add-apt-repository ppa:rquillo/ansible
+$ sudo apt-get update
+$ sudo apt-get install ansible
+````
+
 Ensure docker daemon is running.
 
 For log into container:
