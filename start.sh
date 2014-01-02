@@ -16,5 +16,5 @@ then
    docker kill $oldid
 fi
 
-#id=$(docker run -e NODE_ENV=PRODUCTION -p 8080 -d $BUILDIMAGE)
+docker run -e NODE_ENV=PRODUCTION -p 8080 -d $BUILDIMAGE /bin/sh "cd /src; forever start index.js;forever logs index.js -f"
 #echo $id

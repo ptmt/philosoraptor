@@ -15,5 +15,3 @@ RUN npm install forever -g
 #RUN npm install grunt-cli -g
 ADD . /src
 RUN cd /src; npm install
-ENV NODE_ENV production
-RUN cd /src; forever start index.js;forever logs index.js -f 
