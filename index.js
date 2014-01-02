@@ -183,7 +183,7 @@ function makeSense(twitterUser, text, callback) {
           console.log(i, fromLang, toLang, err, data);
           if (i <= totalCount) {
             fromLang = toLang;
-            toLang = i == (totalCount - 1) || (toLang != 'ru') ? 'ru' : languages[Math.round(Math.random() * languages.length)];
+            toLang = i == (totalCount - 1) || (toLang != 'ru') ? 'ru' : languages[Math.round(Math.random() * (languages.length - 1))];
             // setTimeout((function () {
             bingClient.translate(params, translateOnceAgain);
             //}), 2000);
