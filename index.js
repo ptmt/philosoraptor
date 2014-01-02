@@ -154,7 +154,8 @@ function makeSense(twitterUser, text, callback) {
       return item.text;
     }));
 
-    text = text.split(' ').slice(1, text.length);
+    text.replace(TWITTER_USER, '');
+    text = text.split(' '); //.slice(1, text.length);
     var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
     var twitterReplaces = [Math.round(Math.random() * 10), Math.round(Math.random() * 10)];
     console.log(textReplaces, twitterReplaces, tenWords);
