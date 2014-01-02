@@ -7,6 +7,8 @@ BUILDIMAGE="unknownexception/raptor"
 docker build -t $BUILDIMAGE .   
 #fi
 
+ls
+
 #Stop previously running container
 oldid= $(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
 
