@@ -16,5 +16,5 @@ RUN npm install forever -g
 ADD . /src
 RUN cd /src; npm install
 ENV NODE_ENV production
-RUN forever start /src/index.js 
-RUN forever logs /src/index.js -f
+RUN cd /src; forever start index.js 
+RUN forever logs index.js -f
