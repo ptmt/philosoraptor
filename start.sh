@@ -4,14 +4,14 @@ BUILDIMAGE="unknownexception/raptor"
 #line=$(docker images | grep $BUILDIMAGE)
 #if [ x"$line" = x ]
 #then
-docker build -t $BUILDIMAGE .   
+docker build -t $BUILDIMAGE /home/philosoraptor/src   
 #fi
 
 ls
 
 #Stop previously running container
 oldid= $(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
-if [ x"$line" = x ]
+if [ x"$oldid" = x ]
 then
    docker kill $oldid
 fi

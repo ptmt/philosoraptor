@@ -23,7 +23,7 @@
      shell: cd {{gitdest}}   
 
    - name: Build docker image
-     script: start.sh
+     script: start.sh chroot={{gitdest}}
 
  
    # - name: Get pid from pid.txt if it exists
