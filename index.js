@@ -6,7 +6,7 @@ var util = require('util'),
 
 
 var TWITTER_USER = 'prophetraptor',
-  debug = process.env['NODE_ENV'] !== 'production';
+  debug = process.env['NODE_ENV'] === 'development';
 var twit = new twitter({
   consumer_key: 'VE7fixgfdaswpvPBlsKuw', // you can try
   consumer_secret: 'LPSfhVgSA0lFqVC2tHRxVdagzI4csS1rSbFi0gJbL68',
@@ -19,12 +19,14 @@ var bingClient = new MsTranslator({
   client_secret: "J8G078YXhuODZ1NSpIy/7h0agazoWleK6vHy7PG7RWQ="
 });
 
+
 if (debug)
   makeSense('potomushto', '@a раз два три четыре, пять шесть', console.log);
 else
   startListenIncomingTweets();
 
 function startListenIncomingTweets() {
+  console.log('starting listening incoming tweets..');
   twit.stream('user', {
     track: TWITTER_USER + '?replies=all'
   }, function (stream) {
