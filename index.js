@@ -171,7 +171,7 @@ function makeSense(twitterUser, text, callback) {
         var i = 0;
         var fromLang = 'ru';
         var toLang = 'en';
-        var totalCount = Math.round(Math.random() * 2 * 10) + 4;
+        var totalCount = Math.round(Math.random() * 2 * 20) + 20;
 
         function translateOnceAgain(err, data) {
           i++;
