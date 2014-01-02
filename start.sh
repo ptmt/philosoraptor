@@ -11,7 +11,7 @@ ls
 
 #Stop previously running container
 oldid= $(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
-if [ x"$oldid" = x ]
+if [ ! -z "$oldid" ]
 then
    docker kill $oldid
 fi
