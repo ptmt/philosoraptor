@@ -157,12 +157,17 @@ function makeSense(twitterUser, text, callback) {
 
     text = text.replace('@' + TWITTER_USER, '');
     text = text.split(' '); //.slice(1, text.length);
-    var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
+    if (text.length > 3)
+      var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
     var twitterReplaces = [Math.round(Math.random() * 10), Math.round(Math.random() * 10)];
     console.log(textReplaces, twitterReplaces, tenWords);
-    text[textReplaces[0]] = tenWords[twitterReplaces[0]];
-    text[textReplaces[1]] = tenWords[twitterReplaces[1]];
-    //text = two[0] + ' ' + text + ' ' + two[1];
+    if (text.length > 4) {
+      text[textReplaces[0]] = tenWords[twitterReplaces[0]];
+      text[textReplaces[1]] = tenWords[twitterReplaces[1]];
+    } else {
+      text.push(tenWords[twitterReplaces[0]]);
+      text.push(tenWords[twitterReplaces[1]]);
+    }
     text = text.join(' ').toLowerCase();
 
     if (debug)
@@ -190,8 +195,12 @@ function makeSense(twitterUser, text, callback) {
             bingClient.translate(params, translateOnceAgain);
             //}), 2000);
 
-          } else
+          } else {
+            // final preprations
+            data = data.replace('?', '').replace(' .', '.');
+            data = data.trim();
             callback(data);
+          }
 
         }
 
