@@ -21,7 +21,7 @@ var bingClient = new MsTranslator({
 
 
 if (debug)
-  makeSense('potomushto', '@a раз два три четыре, пять шесть', console.log);
+  makeSense('potomushto', '@potomushto @prophetraptor раз два три четыре, пять шесть', console.log);
 else
   startListenIncomingTweets();
 
@@ -154,7 +154,8 @@ function makeSense(twitterUser, text, callback) {
       return item.text;
     }));
 
-    text.replace(TWITTER_USER, '');
+
+    text = text.replace('@' + TWITTER_USER, '');
     text = text.split(' '); //.slice(1, text.length);
     var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
     var twitterReplaces = [Math.round(Math.random() * 10), Math.round(Math.random() * 10)];
