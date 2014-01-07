@@ -11,8 +11,8 @@
      #Desired git branch
      gitbranch: master
      #docker image
-     dockerimage: unknownexception/raptor     
-     
+     dockerimage: unknownexception/raptor
+
    tasks:
    - name: Git Checkout current Branch
      git: repo={{gitrepo}}
@@ -24,23 +24,3 @@
 
    - name: Build docker image
      script: start.sh chroot={{gitdest}}
-
- 
-   # - name: Get pid from pid.txt if it exists
-   #   command: cat {{pidfile}} removes={{pidfile}}
-   #   register: pid_contents
- 
-   # - name: Stop Node Process if running
-   #   command: kill -2 ${pid_contents.stdout} removes={{pidfile}}
-   #   when: pid_contents.stdout > 1
- 
-   # - name: Change Directories
-   #   command: tmux send-keys -t {{tmuxsession}} "cd {{appPath}}" "ENTER"
-     
-   # - name: Pause to ensure correct state
-   #   pause: seconds=5
- 
-   # - name: Start Node Process if not running
-   #   command: tmux send-keys -t {{tmuxsession}} "NODE_ENV={{nodeenv}} node {{appPath}}/{{nodeapp}}" "ENTER"
-   #   async: 10
-   #   poll: 0
