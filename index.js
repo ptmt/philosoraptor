@@ -31,7 +31,7 @@ function startListenIncomingTweets() {
     track: TWITTER_USER + '?replies=all'
   }, function (stream) {
     stream.on('data', function (data) {
-      if (data.user && data.user.screen_name != TWITTER_USER) {
+      if (data.user && data.user.screen_name != TWITTER_USER && !data.retweeted_status) {
 
         console.log(data);
         makeSense(data.user.screen_name, data.text, function (finalAnswer) {
@@ -131,14 +131,14 @@ function extractTrigram(tweets) {
 function postTweet(statusText, replyToStatusId) {
   twit
     .verifyCredentials(function (data) {
-      console.log(util.inspect(data));
+      console.log('credentionals verified');
     })
     .updateStatus(statusText, {
         'in_reply_to_status_id': replyToStatusId
       },
 
       function (data) {
-        console.log(util.inspect(data.text));
+        console.log(data.text);
       }
   );
 }
@@ -147,7 +147,7 @@ function makeSense(twitterUser, text, callback) {
 
   var languages = ["ar", "bg", "ca", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hu", "id", "it", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk", "vi"];
 
-  text = text.replace('?', '');
+  text = text.replace('?', '').replace('RT:', '').replace('rt:', '');
 
   getTweetsForUser(twitterUser, function (tweets) {
     var tenWords = extractTopTenWords(_.map(tweets, function (item) {
