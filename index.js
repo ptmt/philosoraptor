@@ -33,7 +33,7 @@ function startListenIncomingTweets() {
     stream.on('data', function (data) {
       if (data.user && data.user.screen_name != TWITTER_USER) {
 
-        console.log(data.user.id, data.text);
+        console.log(data);
         makeSense(data.user.screen_name, data.text, function (finalAnswer) {
           postTweet('@' + data.user.screen_name + ' ' + finalAnswer, data.id);
         });
@@ -145,7 +145,7 @@ function postTweet(statusText, replyToStatusId) {
 
 function makeSense(twitterUser, text, callback) {
 
-  var languages = ["ar", "bg", "ca", "zh-CHS", "zh-CHT", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hi", "hu", "id", "it", "ja", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk", "vi"];
+  var languages = ["ar", "bg", "ca", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hu", "id", "it", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk", "vi"];
 
   text = text.replace('?', '');
 
