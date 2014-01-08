@@ -1,11 +1,7 @@
 #!/bin/sh
 
 BUILDIMAGE="unknownexception/raptor"
-
 docker build -t $BUILDIMAGE /home/philosoraptor/src
-
-
-ls
 
 #Stop previously running container
 oldid= $(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
