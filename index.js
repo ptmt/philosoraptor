@@ -31,7 +31,7 @@ function startListenIncomingTweets() {
     track: TWITTER_USER + '?replies=all'
   }, function (stream) {
     stream.on('data', function (data) {
-      console.log(data.retweeted_status);
+
       if (data.user && data.user.screen_name != TWITTER_USER) {
         if (data.retweeted_status)
           console.log('fix retweet');
@@ -218,7 +218,7 @@ function makeSense(twitterUser, text, callback) {
 
 String.prototype.cleanBeforeStart = function () {
   var d = this.replace('?', '').replace('RT:', '').replace('rt:', '');
-
+  return d;
 };
 
 String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
@@ -246,6 +246,8 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
 };
 
 String.prototype.cleanBeforeSubmit = function () {
-  if (this.length > 140)
-    return this.slice(0, 139);
+  var s = this.trim().replace(' . ', '');
+  if (s.length > 140)
+    s = s.slice(0, 139);
+  return s;
 };
