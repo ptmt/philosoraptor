@@ -31,12 +31,14 @@ function startListenIncomingTweets() {
     track: TWITTER_USER + '?replies=all'
   }, function (stream) {
     stream.on('data', function (data) {
-      if (data.user && data.user.screen_name != TWITTER_USER && !data.retweeted_status) {
-
-        console.log(data);
-        makeSense(data.user.screen_name, data.text, function (finalAnswer) {
-          postTweet('@' + data.user.screen_name + ' ' + finalAnswer, data.id);
-        });
+      console.log(data.retweeted_status);
+      if (data.user && data.user.screen_name != TWITTER_USER) {
+        if (data.retweeted_status)
+          console.log('fix retweet');
+        else
+          makeSense(data.user.screen_name, data.text, function (finalAnswer) {
+            postTweet('@' + data.user.screen_name + ' ' + finalAnswer, data.id);
+          });
 
       }
     });
