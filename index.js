@@ -237,7 +237,7 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
     }
 
     // check for links, do not touch instagram
-    if ((words[i].indexOf('http') > -1 && words[i].indexOf('insta') === -1) || words[i].indexOf('t.co'))
+    if ((words[i].indexOf('http') > -1 && words[i].indexOf('insta') === -1) || words[i].indexOf('t.co') > -1)
       words[i] = '';
 
   }
