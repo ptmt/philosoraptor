@@ -228,7 +228,7 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
   var words = str.split(' ');
   for (var i = 0; i < words.length; i++) {
     // hashtags
-    if (words[i].contains('#')) words[i] = words[i].toLowerCase();
+    if (words[i].indexOf('#') > -1) words[i] = words[i].toLowerCase();
 
     // detect not cyrillic words
     if (isRu && skipWords.indexOf(words[i]) > -1 && !cyrillic.test(str)) {
