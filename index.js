@@ -147,21 +147,21 @@ function postTweet(statusText, replyToStatusId) {
 
 function makeSense(twitterUser, text, callback) {
 
-  var languages = ["ar", "bg", "ca", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hu", "id", "it", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk", "vi"];
+  var languages = ["ar", "bg", "ca", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hu", "id", "it", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk"];
 
-  text = text.replace('?', '').replace('RT:', '').replace('rt:', '');
+  text = cleanBeforeStart(text);
+  // no mentions about raptor
+  text = text.replace('@' + TWITTER_USER, '');
 
   getTweetsForUser(twitterUser, function (tweets) {
     var tenWords = extractTopTenWords(_.map(tweets, function (item) {
       return item.text;
     }));
 
-
-    text = text.replace('@' + TWITTER_USER, '');
     text = text.split(' '); //.slice(1, text.length);
-    if (text.length > 3)
-      var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
+    var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
     var twitterReplaces = [Math.round(Math.random() * 10), Math.round(Math.random() * 10)];
+    var skipWords = [tenWords[twitterReplaces[0]], tenWords[twitterReplaces[1]]];
     console.log(textReplaces, twitterReplaces, tenWords);
     if (text.length > 4) {
       text[textReplaces[0]] = tenWords[twitterReplaces[0]];
@@ -177,10 +177,12 @@ function makeSense(twitterUser, text, callback) {
     else {
       bingClient.initialize_token(function (keys) {
 
+        data = data.cleanBeforeContinue(skipWords);
+
         var i = 0;
         var fromLang = 'ru';
         var toLang = 'en';
-        var totalCount = Math.round(Math.random() * 2 * 20) + 20;
+        var totalCount = Math.round(Math.random() * 2 * 20) + 10;
 
         function translateOnceAgain(err, data) {
           i++;
@@ -192,21 +194,18 @@ function makeSense(twitterUser, text, callback) {
           console.log(i, fromLang, toLang, err, data);
           if (i <= totalCount) {
             fromLang = toLang;
-            toLang = i == (totalCount - 1) || (toLang != 'ru') ? 'ru' : languages[Math.round(Math.random() * (languages.length - 1))];
-            // setTimeout((function () {
+            toLang = i == (totalCount - 1) ? 'ru' : languages[Math.round(Math.random() * (languages.length - 1))];
+
             bingClient.translate(params, translateOnceAgain);
-            //}), 2000);
+
 
           } else {
-            // final preprations
-            data = data.replace('?', '').replace(' .', '.');
-            data = data.trim();
-            callback(data);
+            callback(data.cleanBeforeSubmit());
           }
 
         }
 
-        translateOnceAgain(null, text);
+        translateOnceAgain(null, text); //first call
       });
     }
 
@@ -214,3 +213,30 @@ function makeSense(twitterUser, text, callback) {
 
   });
 }
+
+String.prototype.cleanBeforeStart = function () {
+  return this.replace('?', '').replace('RT:', '').replace('rt:', '');
+};
+
+String.prototype.cleanBeforeContinue = function (skipWords) {
+  var cyrillic = /[а-я]/i;
+  var str = this.replace('?', '').replace(' .', '.');
+  str = str.trim();
+  var words = str.split(' ');
+  for (var i = 0; i < words.length; i++) {
+    // hashtags
+    if (words[i].contains('#')) words[i] = words[i].toLowerCase();
+
+    if (skipWords.indexOf(words[i]) && !cyrillic.test(str)) {
+      console.log('not cyrillic, remove it');
+      words[i] = '';
+    }
+  }
+
+  return words.join(' ');
+};
+
+String.prototype.cleanBeforeSubmit = function () {
+  if (this.length > 140)
+    return this.slice(0, 139);
+};
