@@ -2,6 +2,7 @@
 
 BUILDIMAGE="unknownexception/raptor"
 oldid= $(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
+echo $oldid
 docker build -t $BUILDIMAGE /home/philosoraptor/src
 #Stop previously running container
 if [ ! -z "$oldid" ]

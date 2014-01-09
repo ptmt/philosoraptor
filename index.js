@@ -149,7 +149,7 @@ function makeSense(twitterUser, text, callback) {
 
   var languages = ["ar", "bg", "ca", "cs", "da", "nl", "en", "et", "fi", "fr", "de", "el", "ht", "he", "hu", "id", "it", "ko", "lv", "lt", "no", "pl", "pt", "ro", "ru", "sk", "sl", "es", "sv", "th", "tr", "uk"];
 
-  text = cleanBeforeStart(text);
+  text = text.cleanBeforeStart();
   // no mentions about raptor
   text = text.replace('@' + TWITTER_USER, '');
 
@@ -177,7 +177,7 @@ function makeSense(twitterUser, text, callback) {
     else {
       bingClient.initialize_token(function (keys) {
 
-        data = data.cleanBeforeContinue(skipWords);
+
 
         var i = 0;
         var fromLang = 'ru';
@@ -185,6 +185,8 @@ function makeSense(twitterUser, text, callback) {
         var totalCount = Math.round(Math.random() * 2 * 20) + 10;
 
         function translateOnceAgain(err, data) {
+
+          data = data.cleanBeforeContinue(skipWords, fromLang === 'ru');
           i++;
           var params = {
             text: data,
@@ -215,10 +217,11 @@ function makeSense(twitterUser, text, callback) {
 }
 
 String.prototype.cleanBeforeStart = function () {
-  return this.replace('?', '').replace('RT:', '').replace('rt:', '');
+  var d = this.replace('?', '').replace('RT:', '').replace('rt:', '');
+
 };
 
-String.prototype.cleanBeforeContinue = function (skipWords) {
+String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
   var cyrillic = /[а-я]/i;
   var str = this.replace('?', '').replace(' .', '.');
   str = str.trim();
@@ -227,10 +230,16 @@ String.prototype.cleanBeforeContinue = function (skipWords) {
     // hashtags
     if (words[i].contains('#')) words[i] = words[i].toLowerCase();
 
-    if (skipWords.indexOf(words[i]) && !cyrillic.test(str)) {
+    // detect not cyrillic words
+    if (isRu && skipWords.indexOf(words[i]) > -1 && !cyrillic.test(str)) {
       console.log('not cyrillic, remove it');
       words[i] = '';
     }
+
+    // check for links, do not touch instagram
+    if (words[i].indexOf('http') > -1 && words[i].indexOf('insta') === -1)
+      words[i] = '';
+
   }
 
   return words.join(' ');
