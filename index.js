@@ -202,7 +202,7 @@ function makeSense(twitterUser, text, callback) {
 
 
           } else {
-            callback(data.cleanBeforeSubmit());
+            callback(data.cleanBeforeContinue(skipWords).cleanBeforeSubmit());
           }
 
         }
