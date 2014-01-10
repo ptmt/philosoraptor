@@ -1,20 +1,13 @@
 philosoraptor
 =============
 
-
 Build and run Docker container (0.6.5+ required):
 ````
 start.sh
 ````
 Or run ansible-playbook.
 
-````
-$ sudo add-apt-repository ppa:rquillo/ansible
-$ sudo apt-get update
-$ sudo apt-get install ansible
-````
-
-Ensure docker daemon is running.
+Ensure docker daemon is running. (`docker ps`)
 
 For log into container:
 ````

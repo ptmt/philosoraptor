@@ -246,7 +246,7 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
 };
 
 String.prototype.cleanBeforeSubmit = function () {
-  var s = this.trim().replace(' . ', '').replace('"', '').replace("'", "").replace(':', ' ');
+  var s = this.trim().replace(' . ', '').replace('"', '').replace("'", "").replace(':', ' ').replace('»', '');
   if (s.length > 140)
     s = s.slice(0, 139);
   return s;
