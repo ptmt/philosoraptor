@@ -230,6 +230,9 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
     // hashtags
     if (words[i].indexOf('#') > -1) words[i] = words[i].toLowerCase();
 
+    // twitter users
+    if (words[i].indexOf('@') > -1) words[i] = words[i].toLowerCase();
+
     // detect not cyrillic words
     if (isRu && skipWords.indexOf(words[i]) > -1 && !cyrillic.test(str)) {
       console.log('not cyrillic, remove it');
@@ -246,7 +249,7 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
 };
 
 String.prototype.cleanBeforeSubmit = function () {
-  var s = this.trim().replace(' . ', '').replace('"', '').replace("'", "").replace(':', ' ').replace('»', '');
+  var s = this.trim().replace(' . ', '').replace('"', '').replace("'", "").replace(':', ' ').replace('»', '').replace('«', '');
   if (s.length > 140)
     s = s.slice(0, 139);
   return s;
