@@ -235,7 +235,7 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
     if (words[i].indexOf('@') > -1) words[i] = words[i].toLowerCase();
 
     // detect not cyrillic words
-    if (isRu && skipWords.indexOf(words[i]) > -1 && !cyrillic.test(str)) {
+    if (isRu && skipWords.indexOf(words[i]) > -1 && !cyrillicTest.test(str)) {
       console.log('not cyrillic, remove it');
       words[i] = '';
     }
