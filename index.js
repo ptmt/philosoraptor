@@ -202,7 +202,7 @@ function makeSense(twitterUser, text, callback) {
 
 
           } else {
-            callback(data.cleanBeforeContinue(skipWords).cleanBeforeSubmit());
+            callback(data.cleanBeforeContinue(skipWords, true).cleanBeforeSubmit());
           }
 
         }
@@ -222,7 +222,7 @@ String.prototype.cleanBeforeStart = function () {
 };
 
 String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
-  var cyrillic = /[а-я]/i;
+  var cyrillicTest = /[а-я]/i;
   var str = this.replace('?', '').replace(' .', '.');
   str = str.trim();
   var words = str.split(' ');
