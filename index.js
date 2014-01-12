@@ -37,7 +37,8 @@ function startListenIncomingTweets() {
           console.log('fix retweet');
         else
           makeSense(data.user.screen_name, data.text, function (finalAnswer) {
-            postTweet('@' + data.user.screen_name + ' ' + finalAnswer, data.id);
+            var inReplyToId = data.in_reply_to_status_id || data.id;
+            postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
           });
 
       }
