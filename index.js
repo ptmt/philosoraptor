@@ -37,6 +37,8 @@ function startListenIncomingTweets() {
           console.log('fix retweet');
         else
           makeSense(data.user.screen_name, data.text, function (finalAnswer) {
+            console.log('in_reply_to_status_id', data.in_reply_to_status_id);
+            console.log('data.id', data.id);
             var inReplyToId = data.in_reply_to_status_id || data.id;
             postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
           });
@@ -224,7 +226,7 @@ String.prototype.cleanBeforeStart = function () {
 
 String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
   var cyrillicTest = /[а-я]/i;
-  var str = this.replace('?', '').replace(' .', '.');
+  var str = this.replace('?', '').replace(' .', '.').replate('_', ' ');
   str = str.trim();
   var words = str.split(' ');
   for (var i = 0; i < words.length; i++) {
