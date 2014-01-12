@@ -226,7 +226,7 @@ String.prototype.cleanBeforeStart = function () {
 
 String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
   var cyrillicTest = /[а-я]/i;
-  var str = this.replace('?', '').replace(' .', '.').replate('_', ' ');
+  var str = this.replace('?', '').replace(' .', '.').replace('_', ' ');
   str = str.trim();
   var words = str.split(' ');
   for (var i = 0; i < words.length; i++) {
