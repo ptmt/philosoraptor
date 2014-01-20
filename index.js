@@ -39,7 +39,7 @@ function startListenIncomingTweets() {
           makeSense(data.user.screen_name, data.text, function (finalAnswer) {
             console.log('in_reply_to_status_id', data.in_reply_to_status_id);
             console.log('data.id', data.id);
-            var inReplyToId = data.in_reply_to_status_id_str === null ? data.id_str : data.in_reply_to_status_id_str;
+            var inReplyToId = data.id_str;
             console.log('inReplyToId', inReplyToId);
             postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
           });
