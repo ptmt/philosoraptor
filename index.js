@@ -19,9 +19,73 @@ var bingClient = new MsTranslator({
   client_secret: "J8G078YXhuODZ1NSpIy/7h0agazoWleK6vHy7PG7RWQ="
 });
 
+String.prototype.replaceAll = function (find, replace) {
+  function escapeRegExp(str) {
+    return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
+  }
+  return this.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+};
+
+// Array Remove - By John Resig (MIT Licensed)
+Array.prototype.remove = function (from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+
+String.prototype.cleanBeforeStart = function () {
+  var d = this.replace('?', '').replaceAll('RT:', '').replaceAll('rt:', '');
+  return d;
+};
+
+String.prototype.cleanText = function () {
+  var toReplaceWithSpace = [':'];
+  var toRemove = ['"', ' . ', "'", '»', '«', '""'];
+  var s = this;
+
+  _(toReplaceWithSpace).forEach(function (symbol) {
+    s = s.replaceAll(symbol, ' ');
+  });
+  _(toRemove).forEach(function (symbol) {
+    s = s.replaceAll(symbol, '');
+
+  });
+  s = s.replace(/\s+/g, ' ');
+  if (s.length > 140)
+    s = s.slice(0, 139);
+  return s;
+};
+
+String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
+  var cyrillicTest = /[а-я]/i;
+  var str = this.replace('?', '').replaceAll(' .', '.');
+  str = str.trim();
+  str = str.replace(/\s+/g, ' ');
+  var words = str.split(' ');
+
+  for (var i = 0; i < words.length; i++) {
+
+    // detect not cyrillic words
+    if (isRu && skipWords.indexOf(words[i].toLowerCase()) === -1 && !cyrillicTest.test(words[i])) {
+      console.log(words[i], 'not cyrillic, remove it');
+      words[i] = '';
+    }
+
+    // check for links, do not touch instagram TODO: not working because t.co
+    if ((words[i].indexOf('http') > -1 && words[i].indexOf('insta') === -1) || words[i].indexOf('t.co') > -1)
+      words[i] = '';
+
+
+  }
+
+
+  return words.join(' ').cleanText();
+};
+
+
 
 if (debug)
-  makeSense('potomushto', '@potomushto @prophetraptor раз два три четыре, пять шесть', console.log);
+  makeSense('potomushto', '@prophetraptor #one #OneTwo @ev_ev adfa4c раз два три четыре, Kakâvstretilcf Nyjstabil Krasnyjslon  j ты» " "" "" "" "" "" "" "" "" "" "" "" "" ««# Хоккей Нико лук.»', console.log);
 else
   startListenIncomingTweets();
 
@@ -37,10 +101,7 @@ function startListenIncomingTweets() {
           console.log('fix retweet');
         else
           makeSense(data.user.screen_name, data.text, function (finalAnswer) {
-            console.log('in_reply_to_status_id', data.in_reply_to_status_id);
-            console.log('data.id', data.id);
             var inReplyToId = data.id_str;
-            console.log('inReplyToId', inReplyToId);
             postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
           });
 
@@ -162,11 +223,16 @@ function makeSense(twitterUser, text, callback) {
       return item.text;
     }));
 
-    text = text.split(' '); //.slice(1, text.length);
+    var freezedData = freezeTwitterArtifacts(text);
+    text = freezedData.text.toLowerCase();
+    text = text.split(' ');
+    // extract and store hashtags and screen names
+
+    // random words from tweets
     var textReplaces = [Math.round(Math.random() * text.length), Math.round(Math.random() * text.length)];
     var twitterReplaces = [Math.round(Math.random() * 10), Math.round(Math.random() * 10)];
-    var skipWords = [tenWords[twitterReplaces[0]], tenWords[twitterReplaces[1]]];
-    console.log(textReplaces, twitterReplaces, tenWords);
+    var skipWords = _.union(tenWords, text); // do not touch these words when text cleaning
+
     if (text.length > 4) {
       text[textReplaces[0]] = tenWords[twitterReplaces[0]];
       text[textReplaces[1]] = tenWords[twitterReplaces[1]];
@@ -176,8 +242,8 @@ function makeSense(twitterUser, text, callback) {
     }
     text = text.join(' ').toLowerCase();
 
-    if (debug)
-      callback(text);
+    if (debug == -1)
+      callback(text.cleanBeforeContinue([], true).cleanText());
     else {
       bingClient.initialize_token(function (keys) {
 
@@ -189,6 +255,8 @@ function makeSense(twitterUser, text, callback) {
         var totalCount = Math.round(Math.random() * 2 * 20) + 10;
 
         function translateOnceAgain(err, data) {
+          if (data === null)
+            console.log(err);
 
           data = data.cleanBeforeContinue(skipWords, fromLang === 'ru');
           i++;
@@ -206,7 +274,7 @@ function makeSense(twitterUser, text, callback) {
 
 
           } else {
-            callback(data.cleanBeforeContinue(skipWords, true).cleanBeforeSubmit());
+            callback(unfreezeTwitterArtifacts(data.cleanBeforeContinue(skipWords, true), freezedData.positions));
           }
 
         }
@@ -220,41 +288,37 @@ function makeSense(twitterUser, text, callback) {
   });
 }
 
-String.prototype.cleanBeforeStart = function () {
-  var d = this.replace('?', '').replace('RT:', '').replace('rt:', '');
-  return d;
-};
+function freezeTwitterArtifacts(text) {
 
-String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
-  var cyrillicTest = /[а-я]/i;
-  var str = this.replace('?', '').replace(' .', '.').replace('_', ' ');
-  str = str.trim();
-  var words = str.split(' ');
+  var positions = [];
+  var words = text.split(' ');
   for (var i = 0; i < words.length; i++) {
-    // hashtags
-    if (words[i].indexOf('#') > -1) words[i] = words[i].toLowerCase();
+    // hashtags && twitter users
+    if (words[i].indexOf('#') === 0 || words[i].indexOf('@') === 0) {
 
-    // twitter users
-    if (words[i].indexOf('@') > -1) words[i] = words[i].toLowerCase();
-
-    // detect not cyrillic words
-    if (isRu && skipWords.indexOf(words[i]) > -1 && !cyrillicTest.test(str)) {
-      console.log('not cyrillic, remove it');
+      positions.push({
+        word: words[i],
+        i: i
+      });
       words[i] = '';
     }
 
-    // check for links, do not touch instagram
-    if ((words[i].indexOf('http') > -1 && words[i].indexOf('insta') === -1) || words[i].indexOf('t.co') > -1)
-      words[i] = '';
-
   }
+  console.log('freezed:', positions);
+  return {
+    positions: positions,
+    text: words.join(' ') // maybe tokenize better
+  };
+}
+
+function unfreezeTwitterArtifacts(text, artifacts) {
+  var words = text.split(' ');
+
+  _(artifacts).forEach(function (position) {
+    console.log('insert ', position.word, ' into ', position.i);
+    words.splice(position.i, 0, position.word);
+
+  });
 
   return words.join(' ');
-};
-
-String.prototype.cleanBeforeSubmit = function () {
-  var s = this.trim().replace(' . ', '').replace('"', '').replace("'", "").replace(':', ' ').replace('»', '').replace('«', '');
-  if (s.length > 140)
-    s = s.slice(0, 139);
-  return s;
-};
+}
