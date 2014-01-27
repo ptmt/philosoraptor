@@ -85,7 +85,7 @@ String.prototype.cleanBeforeContinue = function (skipWords, isRu) {
 
 
 if (debug)
-  makeSense('potomushto', '@prophetraptor #one #OneTwo @ev_ev adfa4c раз два три четыре, Kakâvstretilcf Nyjstabil Krasnyjslon  j ты» " "" "" "" "" "" "" "" "" "" "" "" "" ««# Хоккей Нико лук.»', console.log);
+  makeSense('potomushto', '@prophetraptor @potomushto #one #OneTwo @ev_ev adfa4c раз два три четыре, Kakâvstretilcf Nyjstabil Krasnyjslon  j ты» " "" "" "" "" "" "" "" "" "" "" "" "" ««# Хоккей Нико лук.»', console.log);
 else
   startListenIncomingTweets();
 
@@ -102,6 +102,7 @@ function startListenIncomingTweets() {
         else
           makeSense(data.user.screen_name, data.text, function (finalAnswer) {
             var inReplyToId = data.id_str;
+            finalAnswer = finalAnswer.replace(data.user.screen_name, '');
             postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
           });
 
@@ -316,7 +317,8 @@ function unfreezeTwitterArtifacts(text, artifacts) {
 
   _(artifacts).forEach(function (position) {
     console.log('insert ', position.word, ' into ', position.i);
-    words.splice(position.i, 0, position.word);
+    if (!words.indexOf(position.word))
+      words.splice(position.i, 0, position.word);
 
   });
 
