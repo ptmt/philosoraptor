@@ -97,14 +97,20 @@ function startListenIncomingTweets() {
     stream.on('data', function (data) {
 
       if (data.user && data.user.screen_name != TWITTER_USER) {
+
         if (data.retweeted_status)
           console.log('fix retweet');
-        else
-          makeSense(data.user.screen_name, data.text, function (finalAnswer) {
-            var inReplyToId = data.id_str;
-            finalAnswer = finalAnswer.replace(data.user.screen_name, '');
-            postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
-          });
+        else {
+          if (data.text.indexOf(TWITTER_USER) === -1 || Math.rand() > 0.2)
+
+
+            makeSense(data.user.screen_name, data.text, function (finalAnswer) {
+              var inReplyToId = data.id_str;
+              finalAnswer = finalAnswer.replace(data.user.screen_name, '');
+              postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
+            });
+        }
+
 
       }
     });
