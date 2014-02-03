@@ -101,7 +101,7 @@ function startListenIncomingTweets() {
         if (data.retweeted_status)
           console.log('fix retweet');
         else {
-          if (data.text.indexOf(TWITTER_USER) > -1 || (data.text.indexOf(TWITTER_USER) === -1 && Math.rand() < 0.1))
+          if (data.text.indexOf(TWITTER_USER) > -1 || (data.text.indexOf(TWITTER_USER) === -1 && Math.random() < 0.2))
 
 
             makeSense(data.user.screen_name, data.text, function (finalAnswer) {
