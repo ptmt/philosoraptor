@@ -1,12 +1,12 @@
 #local file ~/Ansible_playbooks/app_production_playbook.yml
 ---
  #Hostname of your application server, (or group if you are deploying to multiple)
- - hosts: webservers   
+ - hosts: phinitive
    user: root
    vars:
      #repo containing your project
      gitrepo: https://github.com/unknownexception/philosoraptor.git
-     #Destination directory 
+     #Destination directory
      gitdest: /home/philosoraptor/src
      #Desired git branch
      gitbranch: master
@@ -18,9 +18,9 @@
      git: repo={{gitrepo}}
           dest={{gitdest}}
           version={{gitbranch}}
- 
+
    - name: Change directory to source
-     shell: cd {{gitdest}}   
+     shell: cd {{gitdest}}
 
    - name: Build docker image
      script: start.sh chroot={{gitdest}}
