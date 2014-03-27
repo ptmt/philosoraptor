@@ -19,6 +19,13 @@
           dest={{gitdest}}
           version={{gitbranch}}
 
+
+   - name: Cleanup previous docker builds
+     shell: "docker ps -a | grep 'Exit' |  awk '{print $1}' | xargs docker rm &> /dev/null &"
+
+   - name: Cleanup previous docker images
+     shell: "docker images | grep '<none>' |  awk '{print $3}'  | xargs docker rmi &> /dev/null &"
+
    - name: Change directory to source
      shell: cd {{gitdest}}
 
