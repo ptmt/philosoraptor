@@ -2,21 +2,22 @@ var util = require('util'),
   twitter = require('twitter'),
   MsTranslator = require('mstranslator'),
   fs = require('fs'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  CONF = require('config');
 
 
 var TWITTER_USER = 'prophetraptor',
   debug = process.env['NODE_ENV'] === 'development';
 var twit = new twitter({
-  consumer_key: 'VE7fixgfdaswpvPBlsKuw', // you can try
-  consumer_secret: 'LPSfhVgSA0lFqVC2tHRxVdagzI4csS1rSbFi0gJbL68',
-  access_token_key: '1629668064-FWmO5QpI6QbuCkbtU1L4s7wi1iTVKoAWMPA4VPB',
-  access_token_secret: 'q7djQdCJN8ApJeM3yqk06b2Iyt0fFPNoN8tP19kZilcIz'
+  consumer_key: CONF.twitter.consumer_key,
+  consumer_secret: CONF.twitter.consumer_key,
+  access_token_key: CONF.twitter.consumer_key,
+  access_token_secret: CONF.twitter.consumer_key
 });
 
 var bingClient = new MsTranslator({
-  client_id: "philosophoraptor",
-  client_secret: "J8G078YXhuODZ1NSpIy/7h0agazoWleK6vHy7PG7RWQ="
+  client_id: CONF.bing.client_id,
+  client_secret: CONF.bing.client_secret
 });
 
 String.prototype.replaceAll = function (find, replace) {
