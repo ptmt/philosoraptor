@@ -9,3 +9,6 @@ bing:
 instagram:
   client_id: "34d2554d05cb4bf4981865b2c3cd9c75"
   client_secret: "fc5d40c2d453414989caeacccfdbc60f"
+google:
+  api_key: "AIzaSyCnT_7lG2mupK-Xz62QcMUyc7xIUYnaNqM"
+  cx: "008572512467937060619:rngfda__7-k"

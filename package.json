@@ -1,6 +1,6 @@
 {
   "name": "philosoraptor",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -11,16 +11,17 @@
   "dependencies": {
     "config": "~0.4.35",
     "express": "~4.0.0",
+    "googleapis": "^1.0.11",
     "instagram-node": "~0.2.2",
     "lodash": "~2.4.1",
     "natural": "~0.1.25",
     "string": "^2.0.0",
     "twitter": "~0.2.5",
     "user-stream": "0.0.7",
-    "yaml": "~0.2.3"
+    "yaml": "~0.2.3",
+    "node-twitter": "~0.5.0"
   },
   "devDependencies": {
-    "node-twitter": "~0.5.0",
     "mstranslator": "~0.1.5"
   }
 }

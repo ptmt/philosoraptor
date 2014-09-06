@@ -1,11 +1,13 @@
 var util = require('util'),
   twitter = require('twitter'),
+  Twitter = require('node-twitter'), //because of media uploads
   MsTranslator = require('mstranslator'),
   fs = require('fs'),
   _ = require('lodash'),
   S = require('string'),
   CONF = require('config'),
-  textFilters = require('./textfilters');
+  textFilters = require('./textfilters'),
+  google = require('./google');
 
 var TWITTER_USER = 'prophetraptor',
   debug = process.env['NODE_ENV'] === 'development';
@@ -13,34 +15,45 @@ var TWITTER_USER = 'prophetraptor',
 function TwitterRaptor() {
   this.twit = new twitter({
     consumer_key: CONF.twitter.consumer_key,
-    consumer_secret: CONF.twitter.consumer_key,
-    access_token_key: CONF.twitter.consumer_key,
-    access_token_secret: CONF.twitter.consumer_key
+    consumer_secret: CONF.twitter.consumer_secret,
+    access_token_key: CONF.twitter.access_token_key,
+    access_token_secret: CONF.twitter.access_token_secret
   });
 
   this.bingClient = new MsTranslator({
     client_id: CONF.bing.client_id,
     client_secret: CONF.bing.client_secret
   });
-}
 
+  this.twitterRestClient = new Twitter.RestClient(
+    CONF.twitter.consumer_key,
+    CONF.twitter.consumer_secret,
+    CONF.twitter.access_token_key,
+    CONF.twitter.access_token_secret
+  );
+
+}
 
 TwitterRaptor.prototype.startListenIncomingTweets = function () {
   console.log('starting listening incoming tweets..');
+  var _this = this;
   this.twit.stream('user', {
     track: TWITTER_USER + '?replies=all'
   }, function (stream) {
     stream.on('data', function (data) {
-
       if (data.user && data.user.screen_name != TWITTER_USER) {
         if (data.retweeted_status) {
           console.log('fix retweet');
         } else {
           if (data.text.indexOf(TWITTER_USER) > -1 || (data.text.indexOf(TWITTER_USER) === -1 && Math.random() < 0.2))
-            this.makeSense(data.user.screen_name, data.text, this.getTweetsForUser, function (finalAnswer) {
+            _this.makeSense(data.user.screen_name, data.text, _this.getTweetsForUser.bind(_this), function (finalAnswer) {
               var inReplyToId = data.id_str;
               finalAnswer = finalAnswer.replace(data.user.screen_name, '');
-              this.postTweet('@' + data.user.screen_name + ' ' + finalAnswer, inReplyToId);
+              google.searchRandomImage(data.text, function (err, res) {
+                _this.postTweet('@' + data.user.screen_name + ' ' + finalAnswer,
+                  inReplyToId,
+                  res);
+              });
             });
         }
       }
@@ -122,18 +135,30 @@ function extractTrigram(tweets) {
   console.log(_.first(sorted, 1));
 }*/
 
-TwitterRaptor.prototype.postTweet = function (statusText, replyToStatusId) {
-  this.twit
-    .verifyCredentials(function (data) {
-      console.log('credentionals verified');
-    })
-    .updateStatus(statusText, {
-        'in_reply_to_status_id': replyToStatusId
-      },
-      function (data) {
-        console.log('tweet posted:', data.text);
+TwitterRaptor.prototype.postTweet = function (statusText, replyToStatusId, media) {
+  var twitterPayload = {
+    status: statusText
+  };
+  if (replyToStatusId) {
+    twitterPayload.in_reply_to_status_id = replyToStatusId;
+  }
+  if (media) {
+    twitterPayload['media[]'] = media;
+  }
+  if (media) {
+    this.twitterRestClient.statusesUpdateWithMedia(twitterPayload,
+      function (error, result) {
+        if (error) {
+          console.log('Error: ' + (error.code ? error.code + ' ' + error.message : error.message));
+        }
+      });
+  } else {
+    this.twitter.statusesUpdate(twitterPayload, function (err, data) {
+      if (err) {
+        console.error(err);
       }
-  );
+    });
+  }
 }
 
 TwitterRaptor.prototype.makeSense = function (twitterUser, text, basedOnTweetsFunc, callback) {
@@ -189,7 +214,7 @@ TwitterRaptor.prototype.makeSense = function (twitterUser, text, basedOnTweetsFu
           toLang = i == (totalCount - 1) ? 'ru' : languages[Math.round(Math.random() * (languages.length - 1))];
           _this.bingClient.translate(params, translateOnceAgain);
         } else {
-          data = data.cleanBeforeContinue(skipWords, true);
+          data = textFilters.cleanBeforeContinue(data, skipWords, true);
           callback(_this.unfreezeTwitterArtifacts(data));
         }
       }

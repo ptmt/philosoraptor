@@ -1,4 +1,4 @@
 var TwitterRaptor = require('./src/twitter');
 
-twitterRaptor = new TwitterRaptor();
+var twitterRaptor = new TwitterRaptor();
 twitterRaptor.startListenIncomingTweets();

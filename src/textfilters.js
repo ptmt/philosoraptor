@@ -32,6 +32,8 @@ var cleanText = function (s) {
 
 module.exports.cleanBeforeContinue = function (str, skipWords, isRu) {
   var cyrillicTest = /[а-я]/i;
+  if (!str || str.length === 0)
+    return '';
   var str = S(str).replaceAll('?', '').replaceAll(' .', '.').s;
   str = str.trim();
   str = str.replace(/\s+/g, ' ');

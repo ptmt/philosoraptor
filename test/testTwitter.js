@@ -12,8 +12,10 @@ function getTweets(username, callback) {
 // 	getTweets,
 // 	console.log);
 
-twitterRaptor.makeSense(
-	'potomushto',
-	'@prophetraptor @potomushto #one Вот тебе длинный длинный вопрос',
-	getTweets,
-	console.log);
+// twitterRaptor.makeSense(
+// 	'potomushto',
+// 	'@prophetraptor @potomushto #one Вот тебе длинный длинный вопрос',
+// 	getTweets,
+// 	console.log);
+
+twitterRaptor.postTweet('test', null, 'images/Zombie.jpg');
