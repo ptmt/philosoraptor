@@ -153,7 +153,7 @@ TwitterRaptor.prototype.postTweet = function (statusText, replyToStatusId, media
         }
       });
   } else {
-    this.twitter.statusesUpdate(twitterPayload, function (err, data) {
+    this.twitterRestClient.statusesUpdate(twitterPayload, function (err, data) {
       if (err) {
         console.error(err);
       }
