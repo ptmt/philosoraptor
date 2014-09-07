@@ -7,6 +7,7 @@ var http = require('http');
 var https = require('https');
 
 module.exports.searchRandomImage = function (query, done) {
+
 	customsearch.cse.list({
 		cx: CONF.google.cx,
 		q: query,

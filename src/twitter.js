@@ -46,10 +46,11 @@ TwitterRaptor.prototype.startListenIncomingTweets = function () {
           console.log('fix retweet');
         } else {
           if (data.text.indexOf(TWITTER_USER) > -1 || (data.text.indexOf(TWITTER_USER) === -1 && Math.random() < 0.2))
-            _this.makeSense(data.user.screen_name, data.text, _this.getTweetsForUser.bind(_this), function (finalAnswer) {
+            _this.makeSense(data.user.screen_name, data.text, _this.getTweetsForUser.bind(_this), function (finalAnswer, clearAnswer) {
               var inReplyToId = data.id_str;
               finalAnswer = finalAnswer.replace(data.user.screen_name, '');
-              google.searchRandomImage(data.text, function (err, res) {
+
+              google.searchRandomImage(clearAnswer, function (err, res) {
                 _this.postTweet('@' + data.user.screen_name + ' ' + finalAnswer,
                   inReplyToId,
                   res);
@@ -215,7 +216,7 @@ TwitterRaptor.prototype.makeSense = function (twitterUser, text, basedOnTweetsFu
           _this.bingClient.translate(params, translateOnceAgain);
         } else {
           data = textFilters.cleanBeforeContinue(data, skipWords, true);
-          callback(_this.unfreezeTwitterArtifacts(data));
+          callback(_this.unfreezeTwitterArtifacts(data), data);
         }
       }
       translateOnceAgain(null, text); //first call
