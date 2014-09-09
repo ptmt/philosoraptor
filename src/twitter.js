@@ -46,7 +46,7 @@ TwitterRaptor.prototype.startListenIncomingTweets = function () {
           console.log('fix retweet');
         } else {
           if (data.text.indexOf(TWITTER_USER) > -1 || (data.text.indexOf(TWITTER_USER) === -1 && Math.random() < 0.2))
-            _this.makeSense(data.user.screen_name, data.text, _this.getTweetsForUser.bind(_this, data.user.screen_name), function (finalAnswer, clearAnswer) {
+            _this.makeSense(data.user.screen_name, data.text, _this.getTweetsForUser, function (finalAnswer, clearAnswer) {
               var inReplyToId = data.id_str;
               finalAnswer = finalAnswer.replace(data.user.screen_name, '');
 
@@ -63,6 +63,7 @@ TwitterRaptor.prototype.startListenIncomingTweets = function () {
 }
 
 TwitterRaptor.prototype.getTweetsForUser = function (screenName, callback) {
+  console.log('getTweetsForUser', screenName);
   this.twit.get('/statuses/user_timeline.json', {
     screen_name: screenName,
     include_rts: false,
