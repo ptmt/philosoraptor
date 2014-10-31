@@ -14,4 +14,4 @@ then
 fi
 
 docker run -e NODE_ENV=PRODUCTION -p 8080 -d $BUILDIMAGE /bin/bash -c "cd /src; forever start index.js;forever logs index.js -f"
-docker run -e NODE_ENV=PRODUCTION -p 8080 -d $BUILDIMAGE /bin/bash -c "cd /src; node src/daemon.js"
+docker run $BUILDIMAGE /bin/bash -c "cd /src; node src/daemon.js"

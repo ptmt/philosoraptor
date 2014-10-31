@@ -17,7 +17,7 @@ function postTweet(text) {
 
 console.log('starting background job');
 
-new cronJob('0 0 */2 * * *', function() {
+new cronJob('0 0 */12 * * *', function() {
   news.getLastNews(function(err, text) {
     twitterRaptor.makeSense(
       'lentaruofficial',
