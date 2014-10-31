@@ -171,7 +171,9 @@ TwitterRaptor.prototype.makeSense = function (twitterUser, text, basedOnTweetsFu
   // no mentions about raptor
   text = text.replace('@' + TWITTER_USER, '');
 
+
   basedOnTweetsFunc(twitterUser, function (tweets) {
+
     var tenWords = _this.extractTopTenWords(_.map(tweets, function (item) {
       return item.text;
     }));
@@ -191,7 +193,7 @@ TwitterRaptor.prototype.makeSense = function (twitterUser, text, basedOnTweetsFu
       text.push(tenWords[twitterReplaces[1]]);
     }
     text = text.join(' ').toLowerCase();
-    console.log(text);
+    console.log(text, tenWords, twitterReplaces);
     _this.bingClient.initialize_token(function (keys) {
       var i = 0;
       var fromLang = 'ru';

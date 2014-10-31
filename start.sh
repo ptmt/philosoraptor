@@ -1,5 +1,7 @@
 #!/bin/sh
 
+cp -r ../config/ .
+
 BUILDIMAGE="unknownexception/raptor"
 oldid=$(docker ps | grep $BUILDIMAGE | cut -d' ' -f1)
 echo "oldid:::$oldid"
