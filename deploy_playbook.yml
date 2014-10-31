@@ -1,3 +1,4 @@
+
 #local file ~/Ansible_playbooks/app_production_playbook.yml
 ---
  #Hostname of your application server, (or group if you are deploying to multiple)
@@ -15,17 +16,18 @@
 
    tasks:
    - name: check if directory is not empty
-     command: ls {{gitdest}}
+     command: git status chdir= {{gitdest}}
      register: already_git
+     ignore_errors: true
 
    - name: git clone from scratch
      command: git clone -b {{gitbranch}} --single-branch {{gitrepo}}  {{gitdest}}
-     when: not already_git
+     when: already_git.stderr|default("") != ""
 
    - name: Pull last changes
      shell: git reset --hard HEAD && git pull {{gitrepo}} {{gitbranch}} chdir={{gitdest}}
-     when: already_git
-     
+     when: already_git.stdout|default("") != ""
+
    - name: Cleanup previous docker builds
      shell: "docker ps -a | grep 'Exit' |  awk '{print $1}' | xargs docker rm &> /dev/null &"
 
