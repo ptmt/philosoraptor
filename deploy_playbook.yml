@@ -16,7 +16,7 @@
 
    tasks:
    - name: check if directory is not empty
-     command: git status chdir= {{gitdest}}
+     command: git status chdir={{gitdest}}
      register: already_git
      ignore_errors: true
 
