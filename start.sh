@@ -13,5 +13,5 @@ then
    echo $(docker kill $oldid)
 fi
 
-docker run $BUILDIMAGE /bin/bash -c "cd /src; forever start src/daemon.js"
+docker run -e NODE_ENV=PRODUCTION --name raptorwriter -d $BUILDIMAGE /bin/bash -c "cd /src; forever start src/daemon.js"
 docker run -e NODE_ENV=PRODUCTION --name raptorbot -p 8080 -d $BUILDIMAGE /bin/bash -c "cd /src; forever start index.js;forever logs index.js -f"
