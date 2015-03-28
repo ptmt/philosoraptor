@@ -15,14 +15,12 @@ function postTweet(text) {
   });
 }
 
-console.log('starting background job');
+console.log('starting writer job');
 
-new cronJob('0 0 0 * * *', function() {
-  news.getLastNews(function(err, text) {
-    twitterRaptor.makeSense(
-      'lentaruofficial',
-      text[0],
-      getCorpus,
-      postTweet);
-  });
-}, false, true);
+news.getLastNews(function(err, text) {
+  twitterRaptor.makeSense(
+    'lentaruofficial',
+    text[0],
+    getCorpus,
+    postTweet);
+});
